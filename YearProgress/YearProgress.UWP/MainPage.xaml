@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="YearProgress.UWP.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:YearProgress.UWP"
+    xmlns:dataContext="using:YearProgress.UWP.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <dataContext:ProgressTrackerViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ProgressBar Margin="2"
+                     Height="50"
+                     Minimum="{Binding Minimum}"
+                     Maximum="{Binding Maximum}"
+                     Value="{Binding Value}"/>
+    </Grid>
+</Page>

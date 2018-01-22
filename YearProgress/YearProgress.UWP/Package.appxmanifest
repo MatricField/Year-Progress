@@ -7,14 +7,14 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="6948525e-862e-4c78-bddb-486f31131c57"
+    Name="fda40ee6-3fb0-4b3e-ae5c-5b3f98c06bba"
     Publisher="CN=david"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="6948525e-862e-4c78-bddb-486f31131c57" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="fda40ee6-3fb0-4b3e-ae5c-5b3f98c06bba" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>YearProgressUWP</DisplayName>
+    <DisplayName>YearProgress.UWP</DisplayName>
     <PublisherDisplayName>david</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -30,12 +30,12 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="YearProgressUWP.App">
+      EntryPoint="YearProgress.UWP.App">
       <uap:VisualElements
-        DisplayName="YearProgressUWP"
+        DisplayName="YearProgress.UWP"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="YearProgressUWP"
+        Description="YearProgress.UWP"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
