@@ -5,15 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using YearProgress.Core;
+using Windows.UI.Xaml;
 
 namespace YearProgress.UWP.ViewModel
 {
     public class ProgressTrackerViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private ProgressTracker Model { get; }
 
         public int Minimum { get; } = 0;
 
@@ -42,30 +40,22 @@ namespace YearProgress.UWP.ViewModel
         }
 
         public ProgressTrackerViewModel()
-            : this(new ProgressTracker())
         {
+            UpdateProgress();
         }
 
-        public ProgressTrackerViewModel(ProgressTracker model)
-        {
-            Model = model;
-            Recalculate();
-        }
 
-        public void UpdateProgress()
-        {
-            Model.UpdateYearProgress();
-            Recalculate();
-        }
-
-        protected virtual void Recalculate()
+        public virtual void UpdateProgress()
         {
             var now = DateTime.Now;
-            var yearSpan = new DateTime(now.Year, 12, 31) - new DateTime(now.Year, 1, 1);
+            var yearBegin = new DateTime(now.Year, 1, 1, 0, 0, 0);
+            var yearSpan = new DateTime(now.Year, 12, 31) - yearBegin;
             Maximum = yearSpan.Days;
+            var elapsed = Convert.ToDouble((now - yearBegin).Ticks);
+            var span = Convert.ToDouble(yearSpan.Ticks);
             Value =
                 Convert.ToInt32(
-                    (Model.CurrentProgressValue / Model.CompleteProgressValue) * Maximum
+                    (elapsed / span) * Maximum
                     );
         }
 

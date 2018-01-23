@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using YearProgress.Background;
 
 namespace YearProgress.UWP
 {
@@ -37,7 +40,7 @@ namespace YearProgress.UWP
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -58,7 +61,7 @@ namespace YearProgress.UWP
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-
+            await RegisterBackgroundTasks();
             if (e.PrelaunchActivated == false)
             {
                 if (rootFrame.Content == null)
@@ -70,6 +73,30 @@ namespace YearProgress.UWP
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+            }
+        }
+
+        private async Task RegisterBackgroundTasks()
+        {
+            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            const string taskName = "YearProgressUpdate";
+            switch(backgroundAccessStatus)
+            {
+                case BackgroundAccessStatus.AllowedSubjectToSystemPolicy:
+                case BackgroundAccessStatus.AlwaysAllowed:
+                    foreach(var task in BackgroundTaskRegistration.AllTasks)
+                    {
+                        if(task.Value.Name == taskName)
+                        {
+                            task.Value.Unregister(true);
+                        }
+                    }
+                    var taskBuilder = new BackgroundTaskBuilder();
+                    taskBuilder.Name = taskName;
+                    taskBuilder.TaskEntryPoint = typeof(YearProgressBackgroundUpdater).FullName;
+                    taskBuilder.SetTrigger(new TimeTrigger(15/*1440*//*mins*/, oneShot: false));
+                    var registration = taskBuilder.Register();
+                    break;
             }
         }
 
