@@ -50,21 +50,22 @@ namespace YearProgress.Background
                     BindingGeneric = new ToastBindingGeneric()
                     {
                         Children =
-                    {
-                        new AdaptiveText
                         {
-                            Text="Time goes by..."
-                        },
-                        new AdaptiveProgressBar()
-                        {
-                            Title = "Here Is How Much Life You Could Still Waste",
-                            Value = new BindableProgressBarValue("progressValue"),
-                            ValueStringOverride = new BindableString("progressString"),
-                            Status = new BindableString("progressStatus")
+                            new AdaptiveText
+                            {
+                                Text="Time goes by..."
+                            },
+                            new AdaptiveProgressBar()
+                            {
+                                Title = "Here Is How Much Life You Could Still Waste",
+                                Value = new BindableProgressBarValue("progressValue"),
+                                ValueStringOverride = new BindableString("progressString"),
+                                Status = new BindableString("progressStatus")
+                            }
                         }
                     }
-                    }
                 }
+
             };
 
             var toast = new ToastNotification(content.GetXml());

@@ -25,14 +25,34 @@ namespace YearProgress.UWP
     /// </summary>
     sealed partial class App : Application
     {
+
+        public ApplicationTrigger BackgroundNotificationTrigger { get; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            BackgroundNotificationTrigger = new ApplicationTrigger();
+            RegisterBackgroundTasks();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+        }
+
+        private async void RegisterBackgroundTasks()
+        {
+            try
+            {
+                await YearProgressBackgrroundUpdaterRegistrationManager.RegisterTasks("TimeTrigger", new TimeTrigger(15, false));
+                await YearProgressBackgrroundUpdaterRegistrationManager.RegisterTasks("SystemTrigger", new SystemTrigger(SystemTriggerType.UserPresent, false));
+                await YearProgressBackgrroundUpdaterRegistrationManager.RegisterTasks("AppTrigger", BackgroundNotificationTrigger);
+                await BackgroundNotificationTrigger.RequestAsync();
+            }
+            catch(InvalidOperationException)
+            {
+
+            }
         }
 
         /// <summary>
@@ -40,7 +60,7 @@ namespace YearProgress.UWP
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -61,7 +81,6 @@ namespace YearProgress.UWP
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-            await RegisterBackgroundTasks();
             if (e.PrelaunchActivated == false)
             {
                 if (rootFrame.Content == null)
@@ -73,30 +92,6 @@ namespace YearProgress.UWP
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
-            }
-        }
-
-        private async Task RegisterBackgroundTasks()
-        {
-            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-            const string taskName = "YearProgressUpdate";
-            switch(backgroundAccessStatus)
-            {
-                case BackgroundAccessStatus.AllowedSubjectToSystemPolicy:
-                case BackgroundAccessStatus.AlwaysAllowed:
-                    foreach(var task in BackgroundTaskRegistration.AllTasks)
-                    {
-                        if(task.Value.Name == taskName)
-                        {
-                            task.Value.Unregister(true);
-                        }
-                    }
-                    var taskBuilder = new BackgroundTaskBuilder();
-                    taskBuilder.Name = taskName;
-                    taskBuilder.TaskEntryPoint = typeof(YearProgressBackgroundUpdater).FullName;
-                    taskBuilder.SetTrigger(new TimeTrigger(15/*1440*//*mins*/, oneShot: false));
-                    var registration = taskBuilder.Register();
-                    break;
             }
         }
 
